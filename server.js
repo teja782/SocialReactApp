@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 import Users from './Backend/Routes/api/users';
 import Profiles from './Backend/Routes/api/profiles';
 import Posts from './Backend/Routes/api/posts';
+import bodyParser from 'body-parser';
+import bcrypt from 'bcryptjs';
+
+import { WSAELOOP } from 'constants';
 
 const app = express();
 const db = require('./config/config').mongoURI;
@@ -15,6 +19,11 @@ mongoose.connect(db)
     .catch((err) => {
         console.log('connection is unsuccesful');
     })
+
+// Middelewares
+// Body Parser
+app.use(bodyParser.json());    
+app.use(bodyParser.urlencoded({extended:true}));
 
 app.get('/', (req, res) => {
     res.send('Hello');
