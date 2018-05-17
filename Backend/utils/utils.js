@@ -10,13 +10,13 @@ export function generateAvatar(email) {
 }
 
 export function hashPassword(password) {
-    return new Promise((resolve,reject)=>{
-        bycrypt.genSalt(10,(err,salt)=>{
-            bycrypt.hash(password,salt,(err,hash)=>{
-                if(hash){
+    return new Promise((resolve, reject) => {
+        bycrypt.genSalt(10, (err, salt) => {
+            bycrypt.hash(password, salt, (err, hash) => {
+                if (hash) {
                     resolve(hash)
                 }
-                else{
+                else {
                     reject("error:generating hash for the password")
                 }
             })

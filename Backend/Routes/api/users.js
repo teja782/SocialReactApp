@@ -1,12 +1,9 @@
 import express from 'express';
 import User from '../../models/user';
 import bycrypt from 'bcryptjs';
-import {
-    generateAvatar
-} from '../../utils/utils';
-import {
-    hashPassword
-} from '../../utils/utils';
+import {generateAvatar} from '../../utils/utils';
+import {hashPassword} from '../../utils/utils';
+
 const router = express.Router();
 
 router.get('/test', (req, res) => {
@@ -18,8 +15,8 @@ router.get('/test', (req, res) => {
 // Route Registration Post
 router.post('/user/register', (req, res) => {
     User.findOne({
-            email: req.body.email
-        })
+        email: req.body.email
+    })
         .then((user) => {
             if (user) {
                 res.status(400).json({
@@ -35,30 +32,22 @@ router.post('/user/register', (req, res) => {
                     date: req.body.date,
                 })
 
-             const hashpassword = hashPassword(newUser.password);
-             console.log(hashPassword);
-             newUser.password = hashpassword;
-             newUser.save()
-                      .then((user)=>{
-                          if(user){
-                              res.json(user.name)
-                          }
-                      })
-                      .catch((err)=>{
-                          res.status(400).json({msg:err})
-                      });
-
-                //  bycrypt.genSalt(10,(err,salt)=>{
-                //     bycrypt.hash(newUser.password,salt,(err,hash)=>{
-                //         newUser.password = hash;
-                //         newUser.save()
-                //            .then((user)=>{
-                //                if(user){
-                //                    res.json(user)
-                //                }
-                //            })
-                //     })
-                // })
+                // Generating hash for the password using byscrypt.    
+                let pass = newUser.password
+                hashPassword(pass)
+                    .then(hash => {
+                        console.log(hash);
+                    })
+                    .catch(err => { console.log(`This is Promise error ${err}`) });
+                newUser.save()
+                    .then((user) => {
+                        if (user) {
+                            res.status(200).json(user.name)
+                        }
+                    })
+                    .catch(err => {
+                        res.status(400).json({ "msg": err })
+                    })
             }
         })
 })
