@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 router.get('/test',(req,res)=>{
-    res.json({msg:"hello users"})
-});
+    res.json({msg:"Posts from user"});
+})
 
-module.exports = router;
+export default router;
