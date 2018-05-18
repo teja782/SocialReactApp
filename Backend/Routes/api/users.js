@@ -1,8 +1,13 @@
 import express from 'express';
-import User from '../../models/user';
 import bycrypt from 'bcryptjs';
-import {generateAvatar} from '../../utils/utils';
-import {hashPassword} from '../../utils/utils';
+
+import { generateAvatar } from '../../utils/utils';
+import { hashPassword } from '../../utils/utils';
+import { comparePassword } from '../../utils/utils';
+import { generateToken } from '../../utils/utils';
+import {passport} from '../../../config/passport';
+
+import User from '../../models/user';
 
 const router = express.Router();
 
@@ -36,20 +41,42 @@ router.post('/user/register', (req, res) => {
                 let pass = newUser.password
                 hashPassword(pass)
                     .then(hash => {
-                        console.log(hash);
+                        newUser.password = hash;
+                        newUser.save()
+                            .then((user) => {
+                                if (user) {
+                                    res.status(200).json(user.name)
+                                }
+                            })
+                            .catch(err => {
+                                res.status(400).json({ "msg": err })
+                            })
                     })
                     .catch(err => { console.log(`This is Promise error ${err}`) });
-                newUser.save()
-                    .then((user) => {
-                        if (user) {
-                            res.status(200).json(user.name)
-                        }
-                    })
-                    .catch(err => {
-                        res.status(400).json({ "msg": err })
-                    })
+
             }
         })
+})
+
+//Route for user login
+router.post('/login', (req, res) => {
+    User.findOne({ email: req.body.email })
+        .then(user => {
+            // checking user password
+            comparePassword(req.body.password, user.password)
+                .then(isMatch => {
+                  // Generating token for a user login  
+                  const token =  generateToken(user.email, user.password)
+                    res.status(200).json({ "token": token })
+                })
+                .catch(err => {
+                    res.status(400).json({ "msg": "Error is login" })
+                })
+        })
+});
+
+router.get('/current',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    res.json(req.user)
 })
 
 export default router;
