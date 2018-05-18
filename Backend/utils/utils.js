@@ -1,5 +1,7 @@
 import gravatar from 'gravatar';
 import bycrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import key from '../../config/config';
 
 export function generateAvatar(email) {
     return gravatar.url(email, {
@@ -22,4 +24,23 @@ export function hashPassword(password) {
             })
         })
     })
+}
+
+export function comparePassword(password, userPassword) {
+    return new Promise((resolve, reject) => {
+        bycrypt.compare(password, userPassword)
+            .then(isMatch => {
+                if (isMatch) {
+                    console.log(isMatch)
+                    resolve(isMatch)
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
+    })
+}
+
+export function generateToken(user, password) {
+  return jwt.sign({ user: user, password: password }, key.secret);
 }
