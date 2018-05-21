@@ -6,7 +6,7 @@ import Posts from './Backend/Routes/api/posts';
 import bodyParser from 'body-parser';
 import bcrypt from 'bcryptjs';
 import passport from 'passport';
-
+import Passport from './config/passport';
 const app = express();
 const db = require('./config/config').mongoURI;
 
@@ -24,15 +24,11 @@ mongoose.connect(db)
 app.use(bodyParser.json());    
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(passport.initialize());
-require('./config/passport')(passport);
-
-app.get('/', (req, res) => {
-    res.send('Hello');
-});
-
 app.use('/users',Users);
 app.use('/profiles',Profiles);
 app.use('/posts',Posts);
+
+Passport(passport);
 
 const port = process.env.port || 8000;
 
