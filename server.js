@@ -5,8 +5,7 @@ import Profiles from './Backend/Routes/api/profiles';
 import Posts from './Backend/Routes/api/posts';
 import bodyParser from 'body-parser';
 import bcrypt from 'bcryptjs';
-
-import { WSAELOOP } from 'constants';
+import passport from 'passport';
 
 const app = express();
 const db = require('./config/config').mongoURI;
@@ -24,6 +23,8 @@ mongoose.connect(db)
 // Body Parser
 app.use(bodyParser.json());    
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 app.get('/', (req, res) => {
     res.send('Hello');
