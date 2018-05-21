@@ -1,13 +1,15 @@
 import express from 'express';
 import bycrypt from 'bcryptjs';
+import  passport  from 'passport';
+
 
 import { generateAvatar } from '../../utils/utils';
 import { hashPassword } from '../../utils/utils';
 import { comparePassword } from '../../utils/utils';
 import { generateToken } from '../../utils/utils';
-import  passport  from 'passport';
-
 import User from '../../models/user';
+import {registrationValidation} from '../../utils/validation';
+import {loginValidation} from '../../utils/validation';
 
 const router = express.Router();
 
@@ -19,6 +21,12 @@ router.get('/test', (req, res) => {
 
 // Route Registration Post
 router.post('/user/register', (req, res) => {
+    const {registrationErrors,isValid} = registrationValidation(req.body);
+    
+    if(!isValid){
+      return res.status(400).json(registrationErrors)
+    }
+    
     User.findOne({
         email: req.body.email
     })
@@ -60,6 +68,10 @@ router.post('/user/register', (req, res) => {
 
 //Route for user login
 router.post('/login', (req, res) => {
+    const {loginErrors,isValid} = loginValidation(req.body)
+    if(!isValid){
+         return res.status(400).json(loginErrors);
+     }
     User.findOne({ email: req.body.email })
         .then(user => {
             // checking user password
