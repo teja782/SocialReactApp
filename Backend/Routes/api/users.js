@@ -5,7 +5,7 @@ import { generateAvatar } from '../../utils/utils';
 import { hashPassword } from '../../utils/utils';
 import { comparePassword } from '../../utils/utils';
 import { generateToken } from '../../utils/utils';
-import {passport} from '../../../config/passport';
+import  passport  from 'passport';
 
 import User from '../../models/user';
 
@@ -66,8 +66,8 @@ router.post('/login', (req, res) => {
             comparePassword(req.body.password, user.password)
                 .then(isMatch => {
                   // Generating token for a user login  
-                  const token =  generateToken(user.email, user.password)
-                    res.status(200).json({ "token": token })
+                  const token =  generateToken(user.id, user.name)
+                    res.status(200).json({ "token": `Bearer ${token}` })
                 })
                 .catch(err => {
                     res.status(400).json({ "msg": "Error is login" })
@@ -75,8 +75,12 @@ router.post('/login', (req, res) => {
         })
 });
 
-router.get('/current',passport.authenticate('jwt',{session:false}),(req,res)=>{
-    res.json(req.user)
+router.get('/current', passport.authenticate('jwt',{session:false}),(req,res)=>{
+    res.json({
+        id:req.user.id,
+        name:req.user.name,
+        name:req.user.email        
+    });
 })
 
 export default router;

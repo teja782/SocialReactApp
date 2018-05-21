@@ -41,6 +41,6 @@ export function comparePassword(password, userPassword) {
     })
 }
 
-export function generateToken(user, password) {
-  return jwt.sign({ user: user, password: password }, key.secret);
+export function generateToken(id, name) {
+  return jwt.sign({ id: id, name: name }, key.secret);
 }
