@@ -22,4 +22,5 @@ router.all('new',(res, req)=>{
     res.json({hello:"this is tek"});
 })
 
+// add more routers...............
 export default router;
