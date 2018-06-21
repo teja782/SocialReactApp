@@ -11,6 +11,10 @@ router.get('test/customer',()=>{
 
 router.post("test/hello",()=>{
     res.json({h1:"this is h1"});
-})
+});
+
+router.get('"user",()=>{' +
+    '' +
+    '})
 
 export default router;
